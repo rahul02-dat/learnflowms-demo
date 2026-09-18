@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+asyncpg
+redis
+celery
+passlib[argon2]
+aiosmtplib
+pydantic
+pydantic-settings
+pyjwt
+python-dotenv
+pytest
+asgiref
+email-validator
