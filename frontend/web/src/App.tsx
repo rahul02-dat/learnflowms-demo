@@ -75,21 +75,21 @@ const LEARNFLOW_SLIDES: CarouselSlide[] = [
 
 /* ─── Icons ─── */
 const LockIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
     <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
   </svg>
 );
 
 const GraduationCapIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
     <path d="M6 12v5c3 3 9 3 12 0v-5" />
   </svg>
 );
 
 const MailCheckIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0F172A" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h9" />
     <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
     <path d="m16 19 2 2 4-4" />
@@ -240,8 +240,8 @@ export default function App() {
   });
 
   const onFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.currentTarget.style.borderColor = '#3B82F6';
-    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(59, 130, 246, 0.18)';
+    e.currentTarget.style.borderColor = '#2563EB';
+    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(37, 99, 235, 0.18)';
   };
   const onBlur = (e: React.FocusEvent<HTMLInputElement>) => {
     e.currentTarget.style.borderColor = '#E2E8F0';
@@ -369,48 +369,13 @@ export default function App() {
         <section style={styles.authSection}>
           <div style={styles.authCard}>
 
-            {/* TAB SELECTOR: Register vs Sign In */}
-            <div style={styles.tabContainer}>
-              <button
-                type="button"
-                onClick={() => { setViewMode('register'); setShowPw(false); }}
-                style={{
-                  ...styles.tabButton,
-                  ...(viewMode === 'register' ? styles.tabButtonActive : styles.tabButtonInactive),
-                }}
-              >
-                Create Account
-              </button>
-              <button
-                type="button"
-                onClick={() => { setViewMode('login'); setShowPw(false); }}
-                style={{
-                  ...styles.tabButton,
-                  ...(viewMode === 'login' ? styles.tabButtonActive : styles.tabButtonInactive),
-                }}
-              >
-                Sign In
-              </button>
-            </div>
 
-            {/* ICON CONTAINER */}
-            <div style={styles.iconWrap}>
-              <div style={styles.iconBox}>
-                {viewMode === 'register' ? (
-                  <GraduationCapIcon />
-                ) : viewMode === 'verify_otp' ? (
-                  <MailCheckIcon />
-                ) : (
-                  <LockIcon />
-                )}
-              </div>
-            </div>
 
             {/* 1. REGISTRATION VIEW */}
             {viewMode === 'register' && (
               <>
-                <h2 style={styles.cardHeading}>Join LearnFlow</h2>
-                <p style={styles.cardSubtext}>Start your distraction-free, mastery-gated journey.</p>
+                <h2 style={styles.cardHeading}>Create Your Free Account</h2>
+                <div style={{ marginBottom: '24px' }} />
 
                 {regMut.isError && (
                   <div style={styles.errorBanner}>
@@ -419,36 +384,14 @@ export default function App() {
                 )}
 
                 <form onSubmit={hs((d) => regMut.mutate(d))} noValidate>
-                  {/* Role Selector: Learner vs Instructor */}
-                  <div style={styles.rolePickerRow}>
-                    <button
-                      type="button"
-                      onClick={() => setRegisterValue('role', 'learner')}
-                      style={{
-                        ...styles.roleOptionBtn,
-                        ...(selectedRole === 'learner' ? styles.roleOptionBtnActive : {}),
-                      }}
-                    >
-                      <span style={{ fontWeight: 600 }}>🎓 Learner</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setRegisterValue('role', 'instructor')}
-                      style={{
-                        ...styles.roleOptionBtn,
-                        ...(selectedRole === 'instructor' ? styles.roleOptionBtnActive : {}),
-                      }}
-                    >
-                      <span style={{ fontWeight: 600 }}>👨‍🏫 Instructor</span>
-                    </button>
-                  </div>
+
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Full Name</label>
                     <input
                       {...rs('full_name')}
                       type="text"
-                      placeholder="e.g. John Doe"
+                      placeholder="Full Name"
                       style={styles.input}
                       onFocus={onFocus}
                       onBlur={onBlur}
@@ -461,7 +404,7 @@ export default function App() {
                     <input
                       {...rs('email')}
                       type="email"
-                      placeholder="name@example.com"
+                      placeholder="Email Address"
                       style={styles.input}
                       onFocus={onFocus}
                       onBlur={onBlur}
@@ -474,7 +417,7 @@ export default function App() {
                     <input
                       {...rs('phone_number')}
                       type="tel"
-                      placeholder="+1 (555) 000-0000"
+                      placeholder="Phone Number"
                       style={styles.input}
                       onFocus={onFocus}
                       onBlur={onBlur}
@@ -488,7 +431,7 @@ export default function App() {
                       <input
                         {...rs('password')}
                         type={showPw ? 'text' : 'password'}
-                        placeholder="At least 8 characters"
+                        placeholder="Password (min. 8 chars)"
                         style={styles.inputIcon}
                         onFocus={onFocus}
                         onBlur={onBlur}
@@ -514,7 +457,7 @@ export default function App() {
                     disabled={regMut.isPending}
                     style={{
                       ...styles.submitBtn,
-                      background: btnHover && !regMut.isPending ? '#2563EB' : '#3B82F6',
+                      background: btnHover && !regMut.isPending ? '#00D856' : '#03EF62',
                       opacity: regMut.isPending ? 0.75 : 1,
                     }}
                     onMouseEnter={() => setBtnHover(true)}
@@ -578,7 +521,7 @@ export default function App() {
                     disabled={otpMut.isPending}
                     style={{
                       ...styles.submitBtn,
-                      background: btnHover && !otpMut.isPending ? '#2563EB' : '#3B82F6',
+                      background: btnHover && !otpMut.isPending ? '#00D856' : '#03EF62',
                       opacity: otpMut.isPending ? 0.75 : 1,
                     }}
                     onMouseEnter={() => setBtnHover(true)}
@@ -604,8 +547,8 @@ export default function App() {
             {/* 3. SIGN IN VIEW */}
             {viewMode === 'login' && (
               <>
-                <h2 style={styles.cardHeading}>Welcome back</h2>
-                <p style={styles.cardSubtext}>Please enter your details to sign in.</p>
+                <h2 style={styles.cardHeading}>Sign In</h2>
+                <div style={{ marginBottom: '24px' }} />
 
                 {verifiedSuccess && (
                   <div style={styles.successBanner}>
@@ -675,7 +618,7 @@ export default function App() {
                     disabled={loginMut.isPending}
                     style={{
                       ...styles.submitBtn,
-                      background: btnHover && !loginMut.isPending ? '#2563EB' : '#3B82F6',
+                      background: btnHover && !loginMut.isPending ? '#00D856' : '#03EF62',
                       opacity: loginMut.isPending ? 0.75 : 1,
                     }}
                     onMouseEnter={() => setBtnHover(true)}
@@ -710,14 +653,14 @@ const styles: Record<string, CSSProperties> = {
     minHeight: '100vh',
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: '#090D16',
+    backgroundColor: '#05192D',
     color: '#FFFFFF',
     fontFamily: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
   },
   navBar: {
     width: '100%',
     borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-    backgroundColor: 'rgba(9, 13, 22, 0.85)',
+    backgroundColor: 'rgba(5, 25, 45, 0.85)',
     backdropFilter: 'blur(12px)',
     position: 'sticky',
     top: 0,
@@ -776,7 +719,7 @@ const styles: Record<string, CSSProperties> = {
   navContactLink: {
     fontSize: '13px',
     fontWeight: 600,
-    color: '#38BDF8',
+    color: '#03EF62',
     textDecoration: 'none',
   },
   mainLayout: {
@@ -971,11 +914,11 @@ const styles: Record<string, CSSProperties> = {
   },
   authCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: '20px',
+    borderRadius: '12px',
     boxShadow: '0 10px 40px -10px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.1)',
-    padding: '36px 34px 34px',
+    padding: '32px',
     width: '100%',
-    maxWidth: '420px',
+    maxWidth: '380px',
     boxSizing: 'border-box',
     border: '1px solid rgba(255, 255, 255, 0.1)',
   },
@@ -1026,7 +969,7 @@ const styles: Record<string, CSSProperties> = {
     transition: 'all 0.15s ease',
   },
   roleOptionBtnActive: {
-    border: '1.5px solid #3B82F6',
+    border: '1.5px solid #2563EB',
     background: '#EFF6FF',
     color: '#1D4ED8',
   },
@@ -1040,11 +983,11 @@ const styles: Record<string, CSSProperties> = {
     width: '52px',
     height: '52px',
     borderRadius: '16px',
-    backgroundColor: '#3B82F6',
+    backgroundColor: '#03EF62',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 8px 16px -4px rgba(59, 130, 246, 0.35)',
+    boxShadow: '0 8px 16px -4px rgba(3, 239, 98, 0.35)',
   },
   cardHeading: {
     textAlign: 'center',
@@ -1062,14 +1005,10 @@ const styles: Record<string, CSSProperties> = {
     lineHeight: 1.45,
   },
   fieldGroup: {
-    marginBottom: '14px',
+    marginBottom: '10px',
   },
   label: {
-    display: 'block',
-    fontSize: '13px',
-    fontWeight: 500,
-    color: '#334155',
-    marginBottom: '5px',
+    display: 'none',
   },
   input: {
     display: 'block',
@@ -1135,13 +1074,13 @@ const styles: Record<string, CSSProperties> = {
   checkbox: {
     width: '16px',
     height: '16px',
-    accentColor: '#3B82F6',
+    accentColor: '#2563EB',
     cursor: 'pointer',
   },
   forgotLink: {
     fontSize: '13px',
     fontWeight: 600,
-    color: '#3B82F6',
+    color: '#2563EB',
     textDecoration: 'none',
   },
   termsNote: {
@@ -1154,8 +1093,8 @@ const styles: Record<string, CSSProperties> = {
   submitBtn: {
     width: '100%',
     padding: '11px',
-    backgroundColor: '#3B82F6',
-    color: '#FFFFFF',
+    backgroundColor: '#03EF62',
+    color: '#0F172A',
     border: 'none',
     borderRadius: '8px',
     fontSize: '14px',
@@ -1165,7 +1104,7 @@ const styles: Record<string, CSSProperties> = {
     alignItems: 'center',
     justifyContent: 'center',
     transition: 'all 0.15s ease',
-    boxShadow: '0 4px 12px rgba(59, 130, 246, 0.25)',
+    boxShadow: '0 4px 12px rgba(3, 239, 98, 0.25)',
   },
   footerText: {
     textAlign: 'center',
@@ -1174,7 +1113,7 @@ const styles: Record<string, CSSProperties> = {
     color: '#64748B',
   },
   footerLink: {
-    color: '#3B82F6',
+    color: '#2563EB',
     fontWeight: 600,
     background: 'none',
     border: 'none',
