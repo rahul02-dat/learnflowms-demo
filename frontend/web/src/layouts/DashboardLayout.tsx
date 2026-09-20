@@ -14,7 +14,7 @@ export default function DashboardLayout() {
           zIndex: 100,
         }}
       >
-        <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ width: '100%', padding: '0 24px', height: '56px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div className="flex items-center gap-3">
             <div style={{ width: '28px', height: '28px', background: '#39d353', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <span style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '14px', color: '#0d1117', fontWeight: 700 }}>L</span>

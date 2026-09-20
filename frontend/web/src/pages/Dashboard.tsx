@@ -667,7 +667,7 @@ export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'featured' | 'recommended'>('featured')
 
   return (
-      <main style={{ maxWidth: '1200px', margin: '0 auto', padding: '40px 24px 80px' }}>
+      <main style={{ width: '100%', padding: '40px 24px 80px' }}>
         {/* Hero greeting */}
         <div className="mb-8">
           <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: '#39d353', marginBottom: '6px' }}>
