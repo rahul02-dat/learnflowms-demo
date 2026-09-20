@@ -61,6 +61,7 @@ const FEATURED_COURSES = [
     img: 'https://images.unsplash.com/photo-1607799279861-4dd421887fb3?w=800&h=420&fit=crop&auto=format',
     topics: ['Node.js', 'PostgreSQL', 'Redis', 'Docker'],
     progress: 34,
+    linkId: '79d11487-5dae-4e66-bbfb-efe2a7b960cb' // The ID we seeded
   },
   {
     id: 2,
@@ -482,6 +483,8 @@ function TagBadge({ tag }: { tag: string }) {
 }
 
 function FeaturedCourseCard({ course }: { course: typeof FEATURED_COURSES[0] }) {
+  const navigate = useNavigate();
+
   return (
     <div
       className="card-hover"
@@ -563,6 +566,11 @@ function FeaturedCourseCard({ course }: { course: typeof FEATURED_COURSES[0] }) 
               fontWeight: 600,
               cursor: 'pointer',
               transition: 'opacity 0.15s',
+            }}
+            onClick={() => {
+              if (course.linkId) {
+                navigate(`/course/${course.linkId}`);
+              }
             }}
             onMouseEnter={e => (e.currentTarget.style.opacity = '0.8')}
             onMouseLeave={e => (e.currentTarget.style.opacity = '1')}
@@ -662,6 +670,8 @@ function RecommendedCourseCard({ course }: { course: typeof RECOMMENDED_COURSES[
 }
 
 // ─── App ──────────────────────────────────────────────────────────────────────
+
+import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'featured' | 'recommended'>('featured')

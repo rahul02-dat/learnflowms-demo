@@ -4,6 +4,8 @@ from contextlib import asynccontextmanager
 from library.shared.config import settings
 from library.shared.database import db
 from api.auth.router import router as auth_router
+from api.courses.router import router as courses_router
+from api.content.router import router as content_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -27,9 +29,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# API Routers
 app.include_router(auth_router, prefix=f"{settings.API_V1_STR}/auth", tags=["auth"])
+app.include_router(courses_router, prefix=f"{settings.API_V1_STR}/courses", tags=["courses"])
+app.include_router(content_router, prefix=f"{settings.API_V1_STR}/content", tags=["content"])
 
 @app.get(f"{settings.API_V1_STR}/health")
 async def health_check():
     return {"status": "ok"}
-
