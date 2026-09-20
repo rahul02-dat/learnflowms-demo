@@ -73,8 +73,6 @@ const styles = {
   },
   main: {
     padding: '40px',
-    maxWidth: '1200px',
-    margin: '0 auto',
   }
 };
 
