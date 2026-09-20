@@ -12,8 +12,12 @@ async def seed_data():
     print("Connecting to database...")
     await db.connect()
     
-    # 1. Create a Course
-    course_id = str(uuid.uuid4())
+    # Clear existing data to avoid duplicates on re-run
+    print("Clearing old data...")
+    await db.execute("TRUNCATE courses CASCADE;")
+    
+    # 1. Create a Course (Hardcoded ID so Dashboard link always works)
+    course_id = "79d11487-5dae-4e66-bbfb-efe2a7b960cb"
     print(f"Creating course: {course_id}")
     await db.execute(
         """
@@ -69,7 +73,25 @@ async def seed_data():
         INSERT INTO content_items (id, section_id, title, content_type, media_url, text_content, "order")
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         """,
-        content2_id, section1_1_1_id, "Reading Material", "text", None, "<p>Next.js is a React framework...</p>", 2
+        content2_id, section1_1_1_id, "Reading Material", "text", None, "<h3>Understanding the App Router</h3><p>Next.js is a React framework that gives you building blocks to create web applications. The App Router represents the modern way of building Next.js apps...</p>", 2
+    )
+
+    content3_id = str(uuid.uuid4())
+    await db.execute(
+        """
+        INSERT INTO content_items (id, section_id, title, content_type, media_url, text_content, "order")
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        """,
+        content3_id, section1_1_1_id, "Architecture Diagram", "pdf", "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf", None, 3
+    )
+
+    content4_id = str(uuid.uuid4())
+    await db.execute(
+        """
+        INSERT INTO content_items (id, section_id, title, content_type, media_url, text_content, "order")
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        """,
+        content4_id, section1_1_1_id, "Official Documentation", "link", "https://nextjs.org/docs", "Read the official Next.js documentation for deeper insights.", 4
     )
 
     # Create Chapter 2 for structure

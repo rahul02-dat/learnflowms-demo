@@ -71,3 +71,12 @@ body {
   padding: 2px 8px;
   border-radius: 2px;
 }
+
+/* Tiptap Placeholder */
+.ProseMirror p.is-editor-empty:first-child::before {
+  color: #8b949e;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
