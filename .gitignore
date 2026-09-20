@@ -4,3 +4,4 @@ __pycache__/
 .env
 .agents
 .DS_Store
+reference/
