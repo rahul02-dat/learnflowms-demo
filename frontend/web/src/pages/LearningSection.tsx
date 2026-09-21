@@ -106,7 +106,7 @@ export default function LearningSection() {
                   {item.content_type === 'video' && item.media_url && (
                     <div className="mb-8 rounded-xl overflow-hidden border border-[#30363d] shadow-2xl">
                       <LearnFlowVideoPlayer 
-                        sourceType="hls" 
+                        sourceType={item.media_url.includes('youtube.com') || item.media_url.includes('youtu.be') ? 'youtube' : 'hls'}
                         src={item.media_url} 
                         onEnded={() => console.log('Video finished - mark complete')}
                       />

@@ -11,56 +11,75 @@ interface VideoPlayerProps {
 }
 
 export default function LearnFlowVideoPlayer({ sourceType, src, poster, onEnded, onProgress }: VideoPlayerProps) {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const playerRef = useRef<any>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Switch logic based on sourceType
-    // For now, we are implementing HLS natively with video.js.
-    // YouTube/Vimeo would require separate video.js plugins (e.g., videojs-youtube).
-    
-    if (sourceType !== 'hls') {
-      setError(`${sourceType} support is not yet implemented. Currently only HLS is supported for testing.`);
+    if (sourceType !== 'hls' && sourceType !== 'youtube') {
+      setError(`${sourceType} support is not yet implemented. Currently HLS and YouTube are supported.`);
       return;
     }
     
     setError(null);
-    
-    if (!videoRef.current) return;
+    if (!containerRef.current) return;
 
-    const videoElement = videoRef.current;
-    
-    const options = {
-      autoplay: false,
-      controls: true,
-      responsive: true,
-      fluid: true,
-      poster: poster,
-      sources: [{
-        src,
-        type: 'application/x-mpegURL' // HLS MIME type
-      }]
+    // Create a new video element for video.js
+    const videoElement = document.createElement('video');
+    videoElement.classList.add('video-js', 'vjs-big-play-centered', 'vjs-theme-city');
+    containerRef.current.appendChild(videoElement);
+
+    let isMounted = true;
+
+    const initPlayer = async () => {
+      if (sourceType === 'youtube') {
+        // videojs-youtube expects global videojs object
+        if (typeof window !== 'undefined') {
+          (window as any).videojs = videojs;
+        }
+        await import('videojs-youtube');
+      }
+
+      if (!isMounted) return;
+
+      const options: any = {
+        autoplay: false,
+        controls: true,
+        responsive: true,
+        fluid: true,
+        poster: poster,
+        sources: [{
+          src,
+          type: sourceType === 'youtube' ? 'video/youtube' : 'application/x-mpegURL'
+        }]
+      };
+
+      if (sourceType === 'youtube') {
+        options.techOrder = ['youtube'];
+      }
+
+      playerRef.current = videojs(videoElement, options, () => {
+        const player = playerRef.current;
+        if (!player) return;
+        
+        player.on('ended', () => {
+          if (onEnded) onEnded();
+        });
+        
+        player.on('timeupdate', () => {
+          if (onProgress) {
+            const progress = (player.currentTime() / player.duration()) * 100;
+            onProgress(progress);
+          }
+        });
+      });
     };
 
-    playerRef.current = videojs(videoElement, options, () => {
-      // Player is ready
-      const player = playerRef.current;
-      
-      player.on('ended', () => {
-        if (onEnded) onEnded();
-      });
-      
-      player.on('timeupdate', () => {
-        if (onProgress) {
-          const progress = (player.currentTime() / player.duration()) * 100;
-          onProgress(progress);
-        }
-      });
-    });
+    initPlayer();
 
     return () => {
-      if (playerRef.current) {
+      isMounted = false;
+      if (playerRef.current && !playerRef.current.isDisposed()) {
         playerRef.current.dispose();
         playerRef.current = null;
       }
@@ -78,8 +97,7 @@ export default function LearnFlowVideoPlayer({ sourceType, src, poster, onEnded,
   }
 
   return (
-    <div data-vjs-player className="w-full rounded-lg overflow-hidden border border-[#30363d]">
-      <video ref={videoRef} className="video-js vjs-big-play-centered vjs-theme-city" />
+    <div data-vjs-player ref={containerRef} className="w-full rounded-lg overflow-hidden border border-[#30363d]">
     </div>
   );
 }

@@ -64,7 +64,7 @@ async def seed_data():
         INSERT INTO content_items (id, section_id, title, content_type, media_url, text_content, "order")
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         """,
-        content1_id, section1_1_1_id, "Welcome Video", "video", "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8", None, 1
+        content1_id, section1_1_1_id, "Welcome to the Course", "video", "https://youtu.be/nNo9-_QfzOs", None, 1
     )
 
     content2_id = str(uuid.uuid4())
