@@ -4,7 +4,7 @@ import axios from 'axios';
 import LearnFlowVideoPlayer from '../components/LearnFlowVideoPlayer';
 import NotesEditor from '../components/NotesEditor';
 import { useCourseStore } from '../stores/courseStore';
-import { PanelLeftClose, PanelLeftOpen, Maximize, CheckCircle, ExternalLink, FileText as FileTextIcon, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen, Maximize, CheckCircle, ExternalLink, FileText as FileTextIcon, BookOpen, ChevronLeft, ChevronRight, Home, ArrowLeft } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { apiClient } from '../lib/api';
 import MCQTest from '../components/MCQTest';
@@ -124,6 +124,22 @@ export default function LearningSection() {
         </div>
         
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-[#30363d] text-sm font-medium text-[#8b949e] hover:border-[#8b949e] hover:text-[#c9d1d9] transition-colors"
+            title="Go Back"
+          >
+            <ArrowLeft size={16} />
+            <span className="hidden sm:inline" style={{ fontFamily: 'DM Sans, sans-serif' }}>Back</span>
+          </button>
+          <button
+            onClick={() => navigate('/dashboard')}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-[#30363d] text-sm font-medium text-[#8b949e] hover:border-[#8b949e] hover:text-[#c9d1d9] transition-colors"
+            title="Home"
+          >
+            <Home size={16} />
+            <span className="hidden sm:inline" style={{ fontFamily: 'DM Sans, sans-serif' }}>Home</span>
+          </button>
           <button
             onClick={() => setDistractionFree(!distractionFree)}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-md border text-sm font-medium transition-colors ${

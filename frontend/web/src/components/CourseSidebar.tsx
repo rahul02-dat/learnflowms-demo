@@ -1,4 +1,4 @@
-import { useParams, NavLink } from 'react-router-dom';
+import { useParams, NavLink, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { ChevronDown, ChevronRight, Lock, CheckCircle, PlayCircle, FileText } from 'lucide-react';
@@ -101,7 +101,6 @@ function ChapterItem({ chapter, ids }: { chapter: any, ids: any }) {
 
 export default function CourseSidebar() {
   const { courseId } = useParams();
-  const toggleSidebar = useCourseStore((state) => state.toggleSidebar);
   
   const { data: course, isLoading, error } = useQuery({
     queryKey: ['course-tree', courseId],
@@ -120,9 +119,9 @@ export default function CourseSidebar() {
   return (
     <div className="flex flex-col h-full bg-[#0d1117]">
       <div className="p-4 border-b border-[#30363d] sticky top-0 bg-[#0d1117] z-10 flex items-center justify-between">
-        <h2 className="font-bold text-lg text-[#e6edf3]" style={{ fontFamily: 'Fraunces, serif' }}>
+        <Link to={`/course/${courseId}`} className="font-bold text-lg text-[#e6edf3] hover:text-[#58a6ff] transition-colors" style={{ fontFamily: 'Fraunces, serif' }} title="Back to Course Overview">
           {course.title}
-        </h2>
+        </Link>
         {/* Mobile close button could go here */}
       </div>
       
