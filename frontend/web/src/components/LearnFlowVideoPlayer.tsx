@@ -15,6 +15,14 @@ export default function LearnFlowVideoPlayer({ sourceType, src, poster, onEnded,
   const playerRef = useRef<any>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const onEndedRef = useRef(onEnded);
+  const onProgressRef = useRef(onProgress);
+
+  useEffect(() => {
+    onEndedRef.current = onEnded;
+    onProgressRef.current = onProgress;
+  }, [onEnded, onProgress]);
+
   useEffect(() => {
     if (sourceType !== 'hls' && sourceType !== 'youtube') {
       setError(`${sourceType} support is not yet implemented. Currently HLS and YouTube are supported.`);
@@ -63,13 +71,13 @@ export default function LearnFlowVideoPlayer({ sourceType, src, poster, onEnded,
         if (!player) return;
         
         player.on('ended', () => {
-          if (onEnded) onEnded();
+          if (onEndedRef.current) onEndedRef.current();
         });
         
         player.on('timeupdate', () => {
-          if (onProgress) {
+          if (onProgressRef.current) {
             const progress = (player.currentTime() / player.duration()) * 100;
-            onProgress(progress);
+            onProgressRef.current(progress);
           }
         });
       });
@@ -84,7 +92,7 @@ export default function LearnFlowVideoPlayer({ sourceType, src, poster, onEnded,
         playerRef.current = null;
       }
     };
-  }, [src, sourceType, poster, onEnded, onProgress]);
+  }, [src, sourceType, poster]);
 
   if (error) {
     return (

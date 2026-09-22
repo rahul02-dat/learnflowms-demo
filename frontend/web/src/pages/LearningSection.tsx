@@ -5,10 +5,12 @@ import LearnFlowVideoPlayer from '../components/LearnFlowVideoPlayer';
 import NotesEditor from '../components/NotesEditor';
 import { useCourseStore } from '../stores/courseStore';
 import { PanelLeftClose, PanelLeftOpen, Maximize, CheckCircle, ExternalLink, FileText as FileTextIcon, BookOpen, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { apiClient } from '../lib/api';
+import MCQTest from '../components/MCQTest';
 
 const fetchSectionContent = async (sectionId: string) => {
-  const { data } = await axios.get(`http://localhost:8000/api/v1/content/section/${sectionId}`);
+  const { data } = await apiClient.get(`/content/section/${sectionId}`);
   return data.data; // array of content items
 };
 
@@ -22,6 +24,7 @@ export default function LearningSection() {
   const toggleSidebar = useCourseStore(state => state.toggleSidebar);
 
   const [activeItemIndex, setActiveItemIndex] = useState(0);
+  const [progressStatus, setProgressStatus] = useState<'uncompleted' | 'completed' | 'mcq_passed'>('uncompleted');
 
   const { data: contentItems, isLoading, error } = useQuery({
     queryKey: ['section-content', sectionId],
@@ -33,6 +36,57 @@ export default function LearningSection() {
   useEffect(() => {
     setActiveItemIndex(0);
   }, [sectionId]);
+
+  // Fetch progress whenever active item changes
+  useEffect(() => {
+    const item = contentItems?.[activeItemIndex];
+    if (item) {
+      setProgressStatus('uncompleted'); // Reset while fetching
+      apiClient.get(`/content/${item.id}/progress`).then(res => {
+        if (res.data.data?.is_completed) {
+          setProgressStatus('completed');
+        }
+      }).catch(err => {
+        console.error("Error fetching progress", err);
+      });
+    }
+  }, [activeItemIndex, contentItems]);
+
+  const markAsComplete = async () => {
+    const item = contentItems?.[activeItemIndex];
+    if (!item || progressStatus !== 'uncompleted') return;
+    try {
+      await apiClient.post(`/content/${item.id}/progress`);
+      setProgressStatus('completed');
+    } catch (e) {
+      console.error("Failed to mark as complete");
+    }
+  };
+
+  // Intersection Observer for text/pdf auto-completion
+  const bottomRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const item = contentItems?.[activeItemIndex];
+    if (progressStatus !== 'uncompleted' || !item || !item.is_consumption_rule_enabled) return;
+    if (item.content_type !== 'text' && item.content_type !== 'pdf') return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          markAsComplete();
+        }
+      },
+      { threshold: 1.0 }
+    );
+    
+    if (bottomRef.current) {
+      observer.observe(bottomRef.current);
+    }
+    
+    return () => observer.disconnect();
+  }, [activeItemIndex, contentItems, progressStatus]);
+
 
   if (isLoading) {
     return (
@@ -51,7 +105,7 @@ export default function LearningSection() {
   }
 
   return (
-    <div className="w-full h-full flex flex-col bg-[#0d1117] overflow-y-auto">
+    <div className="w-full h-full flex flex-col bg-[#0d1117] overflow-y-auto relative">
       {/* Top Toolbar */}
       <div className="flex items-center justify-between p-4 border-b border-[#30363d] sticky top-0 bg-[#0d1117] z-20">
         <div className="flex items-center gap-3">
@@ -65,7 +119,6 @@ export default function LearningSection() {
             </button>
           )}
           <h1 className="text-xl font-semibold text-[#e6edf3]" style={{ fontFamily: 'Fraunces, serif' }}>
-            {/* The section title would ideally be fetched here or passed via context. Using placeholder for now */}
             Section Content
           </h1>
         </div>
@@ -87,7 +140,7 @@ export default function LearningSection() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex-1 max-w-5xl mx-auto w-full p-6 pb-24">
+      <div className="flex-1 max-w-5xl mx-auto w-full p-6 pb-32">
         {contentItems.length === 0 ? (
           <div className="text-center py-20 text-[#8b949e] font-mono">
             No content available for this section yet.
@@ -108,7 +161,11 @@ export default function LearningSection() {
                       <LearnFlowVideoPlayer 
                         sourceType={item.media_url.includes('youtube.com') || item.media_url.includes('youtu.be') ? 'youtube' : 'hls'}
                         src={item.media_url} 
-                        onEnded={() => console.log('Video finished - mark complete')}
+                        onEnded={() => {
+                          if (item.is_consumption_rule_enabled) {
+                            markAsComplete();
+                          }
+                        }}
                       />
                     </div>
                   )}
@@ -156,6 +213,22 @@ export default function LearningSection() {
                     </a>
                   )}
                   
+                  {/* Invisible element to detect when user scrolls to bottom of content */}
+                  <div ref={bottomRef} className="h-1 w-full" />
+
+                  {/* Manual Mark Complete for bypassed modules */}
+                  {!item.is_consumption_rule_enabled && progressStatus === 'uncompleted' && (
+                    <div className="mt-8 flex justify-end">
+                      <button 
+                        className="flex items-center gap-2 bg-[#238636] hover:bg-[#2ea043] text-white px-6 py-3 rounded-md font-semibold transition-colors shadow-lg"
+                        onClick={markAsComplete}
+                      >
+                        <CheckCircle size={20} />
+                        <span style={{ fontFamily: 'DM Sans, sans-serif' }}>Mark as Complete</span>
+                      </button>
+                    </div>
+                  )}
+
                   {/* Notes Editor for this content item */}
                   <div className="mt-8 pt-8 border-t border-[#30363d]">
                     <div className="flex items-center gap-2 mb-4 text-[#8b949e]">
@@ -164,59 +237,58 @@ export default function LearningSection() {
                     </div>
                     <NotesEditor contentItemId={item.id} />
                   </div>
+
+                  {/* MCQ Test Modal/Section */}
+                  {progressStatus === 'completed' && (
+                    <div className="mt-12">
+                      <MCQTest 
+                        contentItemId={item.id} 
+                        onPassed={() => setProgressStatus('mcq_passed')} 
+                      />
+                    </div>
+                  )}
                 </div>
               );
             })()}
-
-            {/* Pagination Controls */}
-            <div className="mt-12 flex items-center justify-between pt-6 border-t border-[#30363d]">
-              <button
-                onClick={() => setActiveItemIndex(Math.max(0, activeItemIndex - 1))}
-                disabled={activeItemIndex === 0}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-colors ${
-                  activeItemIndex === 0 
-                    ? 'text-[#484f58] cursor-not-allowed' 
-                    : 'text-[#c9d1d9] hover:bg-[#21262d] border border-[#30363d]'
-                }`}
-              >
-                <ChevronLeft size={18} /> Previous
-              </button>
-              
-              <div className="text-sm text-[#8b949e] font-mono">
-                {activeItemIndex + 1} of {contentItems.length}
-              </div>
-              
-              <button
-                onClick={() => setActiveItemIndex(Math.min(contentItems.length - 1, activeItemIndex + 1))}
-                disabled={activeItemIndex === contentItems.length - 1}
-                className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-colors ${
-                  activeItemIndex === contentItems.length - 1
-                    ? 'text-[#484f58] cursor-not-allowed' 
-                    : 'text-white bg-[#238636] hover:bg-[#2ea043]'
-                }`}
-              >
-                Next <ChevronRight size={18} />
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Next/Complete Actions */}
-        {contentItems.length > 0 && (
-          <div className="mt-16 pt-8 border-t border-[#30363d] flex justify-end">
-            <button 
-              className="flex items-center gap-2 bg-[#238636] hover:bg-[#2ea043] text-white px-6 py-3 rounded-md font-semibold transition-colors shadow-lg"
-              onClick={() => {
-                // Implement progress marking here
-                alert("Progress marked as complete! Redirecting to next section...");
-              }}
-            >
-              <CheckCircle size={20} />
-              <span style={{ fontFamily: 'DM Sans, sans-serif' }}>Mark as Complete</span>
-            </button>
           </div>
         )}
       </div>
+
+      {/* Pagination Footer */}
+      {contentItems && contentItems.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-[#0d1117] border-t border-[#30363d] p-4 z-20 flex justify-center">
+          <div className="w-full max-w-5xl flex items-center justify-between">
+            <button
+              onClick={() => setActiveItemIndex(Math.max(0, activeItemIndex - 1))}
+              disabled={activeItemIndex === 0}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-colors ${
+                activeItemIndex === 0 
+                  ? 'text-[#484f58] cursor-not-allowed' 
+                  : 'text-[#c9d1d9] hover:bg-[#21262d] border border-[#30363d]'
+              }`}
+            >
+              <ChevronLeft size={18} /> Previous
+            </button>
+            
+            <div className="text-sm text-[#8b949e] font-mono">
+              {activeItemIndex + 1} of {contentItems.length}
+            </div>
+            
+            <button
+              onClick={() => setActiveItemIndex(Math.min(contentItems.length - 1, activeItemIndex + 1))}
+              disabled={activeItemIndex === contentItems.length - 1 || progressStatus !== 'mcq_passed'}
+              className={`flex items-center gap-2 px-4 py-2 rounded-md font-medium transition-colors ${
+                activeItemIndex === contentItems.length - 1 || progressStatus !== 'mcq_passed'
+                  ? 'bg-[#21262d] text-[#484f58] cursor-not-allowed' 
+                  : 'text-white bg-[#238636] hover:bg-[#2ea043]'
+              }`}
+              title={progressStatus !== 'mcq_passed' ? 'Complete the module and quiz to unlock' : 'Next module'}
+            >
+              Next <ChevronRight size={18} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
