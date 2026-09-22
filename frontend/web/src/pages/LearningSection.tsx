@@ -208,7 +208,7 @@ export default function LearningSection() {
                           Open in new tab <ExternalLink size={12} />
                         </a>
                       </div>
-                      <iframe src={item.media_url} className="w-full flex-1" title={item.title} />
+                      <iframe src={`https://docs.google.com/viewer?url=${encodeURIComponent(item.media_url)}&embedded=true`} className="w-full flex-1" title={item.title} />
                     </div>
                   )}
 
