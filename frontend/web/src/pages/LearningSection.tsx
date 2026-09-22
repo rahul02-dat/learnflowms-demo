@@ -58,8 +58,12 @@ export default function LearningSection() {
     try {
       await apiClient.post(`/content/${item.id}/progress`);
       setProgressStatus('completed');
-    } catch (e) {
-      console.error("Failed to mark as complete");
+      setTimeout(() => {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      }, 300);
+    } catch (e: any) {
+      console.error("Failed to mark as complete", e);
+      alert("Error: Failed to mark video as complete. Please check the console.");
     }
   };
 

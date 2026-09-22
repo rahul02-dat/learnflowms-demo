@@ -74,10 +74,19 @@ export default function LearnFlowVideoPlayer({ sourceType, src, poster, onEnded,
           if (onEndedRef.current) onEndedRef.current();
         });
         
+        let endedTriggered = false;
         player.on('timeupdate', () => {
-          if (onProgressRef.current) {
-            const progress = (player.currentTime() / player.duration()) * 100;
+          const duration = player.duration();
+          const currentTime = player.currentTime();
+          
+          if (onProgressRef.current && duration > 0) {
+            const progress = (currentTime / duration) * 100;
             onProgressRef.current(progress);
+          }
+
+          if (duration > 0 && currentTime >= duration - 2 && !endedTriggered) {
+            endedTriggered = true;
+            if (onEndedRef.current) onEndedRef.current();
           }
         });
       });

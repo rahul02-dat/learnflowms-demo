@@ -22,7 +22,9 @@ const loginSchema = z.object({
 });
 
 const otpSchema = z.object({
-  otp: z.string().min(6, 'Enter the complete 6-digit verification code').max(6),
+  otp: z.string()
+    .transform((val) => val.replace(/[\s-]/g, ''))
+    .pipe(z.string().length(6, 'Enter the complete 6-digit verification code')),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -471,7 +473,7 @@ export default function Auth() {
                     <input
                       {...ro('otp')}
                       type="text"
-                      maxLength={6}
+                      maxLength={10}
                       placeholder="123456"
                       style={{
                         ...styles.input,
