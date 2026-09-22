@@ -13,3 +13,4 @@ pytest
 asgiref
 email-validator
 alembic
+python-multipart
