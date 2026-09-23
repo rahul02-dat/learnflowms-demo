@@ -46,3 +46,49 @@ async def get_hierarchical_section(
         "error": None,
         "meta": {}
     }
+
+from library.course.models import (
+    CreateCourseRequest, CreateChapterRequest,
+    CreateSubChapterRequest, CreateSectionRequest,
+)
+
+@router.post("/")
+async def create_course(request: CreateCourseRequest, service: CourseService = Depends(get_course_service)):
+    result = await service.create_course(request)
+    return {
+        "success": True,
+        "data": result,
+        "error": None,
+        "meta": {}
+    }
+
+@router.post("/{course_id}/chapters")
+async def create_chapter(course_id: str, request: CreateChapterRequest, service: CourseService = Depends(get_course_service)):
+    result = await service.create_chapter(course_id, request)
+    return {
+        "success": True,
+        "data": result,
+        "error": None,
+        "meta": {}
+    }
+
+@router.post("/{course_id}/chapters/{chapter_id}/subchapters")
+async def create_subchapter(course_id: str, chapter_id: str, request: CreateSubChapterRequest, service: CourseService = Depends(get_course_service)):
+    result = await service.create_subchapter(chapter_id, request)
+    return {
+        "success": True,
+        "data": result,
+        "error": None,
+        "meta": {}
+    }
+
+@router.post("/{course_id}/chapters/{chapter_id}/subchapters/{subchapter_id}/sections")
+async def create_section(course_id: str, chapter_id: str, subchapter_id: str, request: CreateSectionRequest, service: CourseService = Depends(get_course_service)):
+    result = await service.create_section(subchapter_id, request)
+    return {
+        "success": True,
+        "data": result,
+        "error": None,
+        "meta": {}
+    }
+

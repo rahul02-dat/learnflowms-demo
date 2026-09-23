@@ -93,6 +93,38 @@ class CourseSchema(BaseModel):
     instructor: Optional[str]
     is_published: bool
     chapters: list[ChapterSchema] = []
-    
+
     class Config:
         from_attributes = True
+
+class CreateCourseRequest(BaseModel):
+    title: str
+    description: Optional[str] = None
+    instructor: Optional[str] = None
+    is_published: bool = False
+
+    class Config:
+        from_attributes = True
+
+class CreateChapterRequest(BaseModel):
+    title: str
+    order: int = 0
+
+    class Config:
+        from_attributes = True
+
+class CreateSubChapterRequest(BaseModel):
+    title: str
+    order: int = 0
+
+    class Config:
+        from_attributes = True
+
+class CreateSectionRequest(BaseModel):
+    title: str
+    order: int = 0
+    is_gated: bool = True
+
+    class Config:
+        from_attributes = True
+
