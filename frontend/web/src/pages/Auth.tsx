@@ -207,6 +207,7 @@ export default function Auth() {
     onSuccess: (data) => {
       console.log('Login Response:', data);
       localStorage.setItem('token', data.access_token);
+      localStorage.setItem('full_name', data.full_name || '');
       navigate('/dashboard');
     },
   });

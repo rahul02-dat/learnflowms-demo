@@ -676,12 +676,18 @@ import { useNavigate } from 'react-router-dom';
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'featured' | 'recommended'>('featured')
 
+  // Dynamic greeting
+  const fullName = localStorage.getItem('full_name') || '';
+  const firstName = fullName.split(' ')[0] || 'Learner';
+  const hour = new Date().getHours();
+  const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+
   return (
       <main style={{ width: '100%', padding: '40px 24px 80px' }}>
         {/* Hero greeting */}
         <div className="mb-8">
           <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: '#39d353', marginBottom: '6px' }}>
-            Good morning, Aryan —
+            {timeGreeting}, {firstName} —
           </p>
           <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: '36px', fontWeight: 600, color: '#e6edf3', lineHeight: 1.15 }}>
             Your Progress Report
