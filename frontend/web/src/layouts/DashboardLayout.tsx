@@ -42,7 +42,7 @@ export default function DashboardLayout() {
                 cursor: 'pointer',
               }}
             >
-              {(localStorage.getItem('full_name') || 'U')[0].toUpperCase()}
+              A
             </div>
           </div>
         </div>

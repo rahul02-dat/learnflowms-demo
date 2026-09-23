@@ -87,12 +87,7 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
     access_token = AuthenticationService.create_access_token(data={"sub": str(user["id"])})
     refresh_token = AuthenticationService.create_refresh_token(data={"sub": str(user["id"])})
 
-    return {
-        "access_token": access_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-        "full_name": user["full_name"],
-    }
+    return {"access_token": access_token, "refresh_token": refresh_token, "token_type": "bearer"}
 
 @router.post("/refresh", response_model=TokenResponse)
 async def refresh_token(refresh_token: str):
@@ -124,4 +119,16 @@ async def resend_verification_otp(email: str):
         
     await NotificationService.dispatch_verification_otp(user["id"], user["email"])
     return {"msg": "Verification OTP sent"}
+
+from api.deps import get_current_user
+from library.identity.domain.models import UserResponse as UserResp
+
+@router.get("/me")
+async def get_me(current_user: UserResp = Depends(get_current_user)):
+    return {
+        "id": str(current_user.id),
+        "email": current_user.email,
+        "full_name": current_user.full_name,
+        "is_active": current_user.is_active,
+    }
 

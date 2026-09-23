@@ -44,8 +44,8 @@ function getColor(hours: number) {
   return '#39d353'
 }
 
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
-const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
 const FEATURED_COURSES = [
   {
@@ -683,88 +683,88 @@ export default function Dashboard() {
   const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
   return (
-      <main style={{ width: '100%', padding: '40px 24px 80px' }}>
-        {/* Hero greeting */}
-        <div className="mb-8">
-          <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: '#39d353', marginBottom: '6px' }}>
-            {timeGreeting}, {firstName} —
-          </p>
-          <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: '36px', fontWeight: 600, color: '#e6edf3', lineHeight: 1.15 }}>
-            Your Progress Report
-          </h1>
-        </div>
+    <main style={{ width: '100%', padding: '40px 24px 80px' }}>
+      {/* Hero greeting */}
+      <div className="mb-8">
+        <p style={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '12px', color: '#39d353', marginBottom: '6px' }}>
+          {timeGreeting}, {firstName} —
+        </p>
+        <h1 style={{ fontFamily: 'Fraunces, serif', fontSize: '36px', fontWeight: 600, color: '#e6edf3', lineHeight: 1.15 }}>
+          Your Progress Report
+        </h1>
+      </div>
 
-        {/* Progress section */}
-        <div className="mb-5">
-          <Heatmap />
-        </div>
+      {/* Progress section */}
+      <div className="mb-5">
+        <Heatmap />
+      </div>
 
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '16px',
-            marginBottom: '56px',
-          }}
-        >
-          <WeeklyProgress />
-          <SkillProgress />
-        </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: '16px',
+          marginBottom: '56px',
+        }}
+      >
+        <WeeklyProgress />
+        <SkillProgress />
+      </div>
 
-        {/* Courses section */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: '28px', fontWeight: 600, color: '#e6edf3' }}>
-              Courses
-            </h2>
-            <div
-              className="flex"
-              style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '6px', padding: '3px' }}
-            >
-              {(['featured', 'recommended'] as const).map(tab => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  style={{
-                    background: activeTab === tab ? '#238636' : 'transparent',
-                    color: activeTab === tab ? '#e6edf3' : '#8b949e',
-                    border: 'none',
-                    borderRadius: '4px',
-                    padding: '6px 16px',
-                    fontFamily: 'DM Sans, sans-serif',
-                    fontSize: '13px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                    textTransform: 'capitalize',
-                    transition: 'all 0.15s',
-                  }}
-                >
-                  {tab === 'featured' ? 'Featured' : 'Recommended'}
-                </button>
-              ))}
-            </div>
+      {/* Courses section */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: '28px', fontWeight: 600, color: '#e6edf3' }}>
+            Courses
+          </h2>
+          <div
+            className="flex"
+            style={{ background: '#161b22', border: '1px solid #30363d', borderRadius: '6px', padding: '3px' }}
+          >
+            {(['featured', 'recommended'] as const).map(tab => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(tab)}
+                style={{
+                  background: activeTab === tab ? '#238636' : 'transparent',
+                  color: activeTab === tab ? '#e6edf3' : '#8b949e',
+                  border: 'none',
+                  borderRadius: '4px',
+                  padding: '6px 16px',
+                  fontFamily: 'DM Sans, sans-serif',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                  textTransform: 'capitalize',
+                  transition: 'all 0.15s',
+                }}
+              >
+                {tab === 'featured' ? 'Featured' : 'Recommended'}
+              </button>
+            ))}
           </div>
-
-          {activeTab === 'featured' ? (
-            <div className="flex flex-col gap-4">
-              {FEATURED_COURSES.map(course => (
-                <FeaturedCourseCard key={course.id} course={course} />
-              ))}
-            </div>
-          ) : (
-            <div
-              style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-                gap: '16px',
-              }}
-            >
-              {RECOMMENDED_COURSES.map(course => (
-                <RecommendedCourseCard key={course.id} course={course} />
-              ))}
-            </div>
-          )}
         </div>
-      </main>
+
+        {activeTab === 'featured' ? (
+          <div className="flex flex-col gap-4">
+            {FEATURED_COURSES.map(course => (
+              <FeaturedCourseCard key={course.id} course={course} />
+            ))}
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            {RECOMMENDED_COURSES.map(course => (
+              <RecommendedCourseCard key={course.id} course={course} />
+            ))}
+          </div>
+        )}
+      </div>
+    </main>
   )
 }
