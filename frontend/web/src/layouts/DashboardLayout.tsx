@@ -1,6 +1,40 @@
 import { Outlet } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { apiClient } from '../lib/api';
 
 export default function DashboardLayout() {
+  const [userInitial, setUserInitial] = useState(() => {
+    const stored = localStorage.getItem('full_name') || '';
+    return stored ? stored[0].toUpperCase() : 'U';
+  });
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const res = await apiClient.get('/auth/me');
+        const name = res.data.full_name || '';
+        localStorage.setItem('full_name', name);
+        window.dispatchEvent(new Event('user-updated'));
+        setUserInitial(name ? name[0].toUpperCase() : 'U');
+      } catch (err) {
+        console.error("Failed to fetch user data", err);
+      }
+    };
+    
+    if (!localStorage.getItem('full_name')) {
+      fetchUser();
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleUserUpdated = () => {
+      const stored = localStorage.getItem('full_name') || '';
+      setUserInitial(stored ? stored[0].toUpperCase() : 'U');
+    };
+    window.addEventListener('user-updated', handleUserUpdated);
+    return () => window.removeEventListener('user-updated', handleUserUpdated);
+  }, []);
+
   return (
     <div style={{ background: '#0d1117', minHeight: '100vh', color: '#e6edf3' }}>
       {/* Nav */}
@@ -42,7 +76,7 @@ export default function DashboardLayout() {
                 cursor: 'pointer',
               }}
             >
-              A
+              {userInitial}
             </div>
           </div>
         </div>

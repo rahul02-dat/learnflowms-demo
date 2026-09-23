@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -675,10 +675,21 @@ import { useNavigate } from 'react-router-dom';
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'featured' | 'recommended'>('featured')
+  const [firstName, setFirstName] = useState(() => {
+    const stored = localStorage.getItem('full_name') || '';
+    return stored.split(' ')[0] || 'Learner';
+  });
+
+  useEffect(() => {
+    const handleUserUpdated = () => {
+      const stored = localStorage.getItem('full_name') || '';
+      setFirstName(stored.split(' ')[0] || 'Learner');
+    };
+    window.addEventListener('user-updated', handleUserUpdated);
+    return () => window.removeEventListener('user-updated', handleUserUpdated);
+  }, []);
 
   // Dynamic greeting
-  const fullName = localStorage.getItem('full_name') || '';
-  const firstName = fullName.split(' ')[0] || 'Learner';
   const hour = new Date().getHours();
   const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
 
