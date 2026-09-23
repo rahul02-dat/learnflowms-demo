@@ -21,9 +21,9 @@ export default function DashboardLayout() {
       }
     };
     
-    if (!localStorage.getItem('full_name')) {
-      fetchUser();
-    }
+    // Always fetch on mount to ensure we have the correct user's name 
+    // (handles account switching)
+    fetchUser();
   }, []);
 
   useEffect(() => {
